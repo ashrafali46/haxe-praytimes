@@ -3,7 +3,7 @@ package org.praytimes;
 import org.praytimes.Times;
 import org.praytimes.constants.CalculationMethod;
 import org.praytimes.constants.HighLatMode;
-import org.praytimes.constants.JuristicMethod;
+import org.praytimes.constants.JuristicMode;
 import org.praytimes.constants.MidnightMode;
 import org.praytimes.constants.Time;
 import org.praytimes.utils.DMath;
@@ -268,9 +268,9 @@ class PrayTimes
 	}
 
 	// get asr shadow factor
-	private function asrFactor(asrParam : String) : Float
+	private function asrFactor(asrParam : JuristicMode) : Float
 	{
-		return (asrParam == JuristicMethod.HANAFI) ? 2 : 1;
+		return (asrParam == JuristicMode.hanafi) ? 2 : 1;
 	}
 
 	// return sun angle for sunset/sunrise

@@ -33,7 +33,7 @@ class CalculationMethod
     public var maghribOffset : Float = 0;
     public var imsakOffset : Float = 10;
     public var dhuhrOffset : Float = 0;
-    public var asrMethod : String = "Standard";
+    public var asrMethod : JuristicMode = JuristicMode.standard;
     public var midnightMethod : String = "Standard";
     
     public function new(name : String, fajrAngle : Float, ishaAngle : Float, maghribAngle : Float = 0, midnightMethod : String = "Standard")
