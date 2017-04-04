@@ -26,6 +26,15 @@ Rise Angle :</b> for sunrise and sunset offset default value is 0.833 + sun angl
    1/7th of night<br/>
    No adjustment<br/>
 
+Install via 
+`haxelib git praytimes https://github.com/manjav/haxe-praytimes`
+
+Add to `project.xml`:
+
+```xml
+<haxelib name="praytimes" if="android" />
+```
+
 ```Haxe
 var pt:PrayTimes = new PrayTimes(CalculationMethod.TEHRAN, 35.6961, 51.4231, 0, 4.5);
 var dts:Array<Date> = pt.getTimes().toDates();
