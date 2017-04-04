@@ -2,7 +2,7 @@ package org.praytimes;
 
 import org.praytimes.Times;
 import org.praytimes.constants.CalculationMethod;
-import org.praytimes.constants.HighLatMethod;
+import org.praytimes.constants.HighLatMode;
 import org.praytimes.constants.JuristicMethod;
 import org.praytimes.constants.MidnightMode;
 import org.praytimes.constants.Time;
@@ -62,26 +62,29 @@ import org.praytimes.utils.DMath;
 class PrayTimes
 {
 	private var numIterations : Int = 1;
-	private var calculationMethod : CalculationMethod;
 	//private var offset:Object;
 
 	// coordinates
 	private var lat : Float;
 	private var lng : Float;
 	private var elv : Float;
-	private var highLats : String;
 	// time variables
 	private var timeZone : Float;
 	private var jDate : Float;
 	private var date : Date;
 
-	public function new(calculationMethod : CalculationMethod, lat : Float, lng : Float, elv : Float = 0, timeZone : Float = 0, highLats : String = "NightMiddle")
+	private var highLats : HighLatMode;
+	private var calculationMethod : CalculationMethod;
+
+	public function new(calculationMethod : CalculationMethod, lat : Float, lng : Float, elv : Float = 0, timeZone : Float = 0, highLats : HighLatMode = null)
 	{
 		this.calculationMethod = calculationMethod;
 		this.lat = lat;
 		this.lng = lng;
 		this.elv = elv;
 		this.timeZone = timeZone;
+		if (highLats == null)
+			highLats =  HighLatMode.nightMiddle;
 		this.highLats = highLats;
 	}
 
@@ -241,8 +244,7 @@ class PrayTimes
 		for (t in times.__times.keys())
 			times.__times[t] += timeZone - lng / 15;
 
-		if (highLats != HighLatMethod.NONE)
-			times = this.adjustHighLats(times);
+		times = this.adjustHighLats(times);
 
 		/*if (this.isMin(params.imsak))
 		times.imsak = times.fajr- this.eval(params.imsak)/ 60;
@@ -299,6 +301,9 @@ class PrayTimes
 	// adjust times for locations in higher latitudes
 	private function adjustHighLats(times : Times) : Times
 	{
+		if (highLats.equals(HighLatMode.none))
+			return times;
+		
 		var nightTime : Float = this.timeDiff(times.__times[Time.sunset], times.__times[Time.sunrise]);
 
 		times.__times[Time.imsak] = this.adjustHLTime(times.__times[Time.imsak], times.__times[Time.sunrise], calculationMethod.imsakOffset, nightTime, "ccw");
@@ -323,10 +328,10 @@ class PrayTimes
 	private function nightPortion(angle : Float, night : Float) : Float
 	{
 		var portion : Float = 0.5;  // MidNight
-		if (highLats == HighLatMethod.ANGLE_BASED)
-			portion = 1 / 60 * angle
-			else if (highLats == HighLatMethod.ONE_SEVENTH)
-				portion = 1 / 7;
+		if (highLats.equals(HighLatMode.angleBased))
+			portion = 1 / 60 * angle;
+		else if (highLats.equals(HighLatMode.oneSeventh))
+			portion = 1 / 7;
 		return portion * night;
 	}
 
