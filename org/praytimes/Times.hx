@@ -16,26 +16,7 @@ enum Suffix
 class Times
 {
 
-	// convert float time to the given format (see timeFormats)
-	public static function getFormattedTime(time : Float, format : Format = null) : String
-	{
-		if (format == null)
-			format = Format.h24;
-		
-		if (Math.isNaN(time))
-			return "--Invalid time--";
-
-		if (format == Format.float)
-			return Std.string(time);
-
-		time = DMath.fixHour(time + 0.5 / 60);  // add 0.5 minutes to round
-		var hours : Float = Math.floor(time);
-		var minutes : Float = Math.floor((time - hours) * 60);
-		var suffix : String = format == Format.h12 ? ((hours < 12) ? Suffix.am.getName() : Suffix.pm.getName()) : "";
-		var hour : String = format == Format.h24 ? twoDigitsFormat(hours) : Std.string(((hours + 12 - 1) % 12 + 1));
-		return hour + ":" + twoDigitsFormat(minutes) + ((suffix != null) ? " " + suffix : "");
-	}
-
+	
 	// add a leading 0 if necessary
 	public static function twoDigitsFormat(num : Float) : String
 	{
@@ -75,6 +56,26 @@ class Times
 		for (t in __times.keys())
 			ret += t + ":" + getFormattedTime(__times[t], format) + (t==Time.midnight?"":", ") ;
 		return ret;
+	}
+	
+	// convert float time to the given format (see timeFormats)
+	public static function getFormattedTime(time : Float, format : Format = null) : String
+	{
+		if (format == null)
+			format = Format.h24;
+		
+		if (Math.isNaN(time))
+			return "--Invalid time--";
+
+		if (format == Format.float)
+			return Std.string(time);
+
+		time = DMath.fixHour(time + 0.5 / 60);  // add 0.5 minutes to round
+		var hours : Float = Math.floor(time);
+		var minutes : Float = Math.floor((time - hours) * 60);
+		var suffix : String = format == Format.h12 ? ((hours < 12) ? Suffix.am.getName() : Suffix.pm.getName()) : "";
+		var hour : String = format == Format.h24 ? twoDigitsFormat(hours) : Std.string(((hours + 12 - 1) % 12 + 1));
+		return hour + ":" + twoDigitsFormat(minutes) + ((suffix != null) ? " " + suffix : "");
 	}
 
 	public function toDates() : Array<Date>
