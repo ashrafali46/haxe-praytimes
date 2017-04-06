@@ -3,34 +3,36 @@ package org.praytimes;
 import org.praytimes.constants.Time;
 import org.praytimes.utils.DMath;
 
+enum Format
+{
+	h24; h12; hns12; float; 
+}
+
+enum Suffix
+{
+	am; pm;
+}
+
 class Times
 {
-	/**24-hour format<br>Value: "24h"*/
-	public static inline var FORMAT_H24 : String = "24h";
-	/**12-hour format<br>Value: "12h"*/
-	public static inline var FORMAT_H12 : String = "12h";
-	/**12-hour format with no suffix<br>Value: "12hNS"*/
-	public static inline var FORMAT_HNS12 : String = "12hNS";
-	/**floating point number<br>Value: "Float"*/
-	public static inline var FORMAT_FLOAT : String = "Float";
-
-	public static inline var SUFFIXES_AM : String = "am";
-	public static inline var SUFFIXES_PM : String = "pm";
 
 	// convert float time to the given format (see timeFormats)
-	public static function getFormattedTime(time : Float, format : String = "24h") : String
+	public static function getFormattedTime(time : Float, format : Format = null) : String
 	{
+		if (format == null)
+			format = Format.h24;
+		
 		if (Math.isNaN(time))
 			return "--Invalid time--";
 
-		if (format == FORMAT_FLOAT)
+		if (format == Format.float)
 			return Std.string(time);
 
 		time = DMath.fixHour(time + 0.5 / 60);  // add 0.5 minutes to round
 		var hours : Float = Math.floor(time);
 		var minutes : Float = Math.floor((time - hours) * 60);
-		var suffix : String = ((format == "12h")) ? (hours < 12) ? SUFFIXES_AM : SUFFIXES_PM : "";
-		var hour : String = ((format == "24h")) ? twoDigitsFormat(hours) : Std.string(((hours + 12 - 1) % 12 + 1));
+		var suffix : String = format == Format.h12 ? ((hours < 12) ? Suffix.am.getName() : Suffix.pm.getName()) : "";
+		var hour : String = format == Format.h24 ? twoDigitsFormat(hours) : Std.string(((hours + 12 - 1) % 12 + 1));
 		return hour + ":" + twoDigitsFormat(minutes) + ((suffix != null) ? " " + suffix : "");
 	}
 
@@ -64,8 +66,11 @@ class Times
 		return "imsak: " + imsak + ", fajr: " + fajr + ", sunrise: " + sunrise + ", dhuhr: " + dhuhr + ", asr: " + asr + ", sunset: " + sunset + ", maghrib: " + maghrib + ", isha: " + isha + ", midnight: " + midnight;
 	}
 
-	public function toTimeFormatString(format : String = "24h") : String
+	public function toTimeFormatString(format : Format = null) : String
 	{
+		if (format == null)
+			format = Format.h24;
+			
 		var ret:String = "";
 		for (t in __times.keys())
 			ret += t + ":" + getFormattedTime(__times[t], format) + (t==Time.midnight?"":", ") ;
